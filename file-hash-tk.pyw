@@ -87,25 +87,29 @@ def compare_hashes():
     reset_ui(status_only=True)
 
     hashes = compute_hashes()
+    matches = []
 
     md5_text = md5_entry.get().lower()
     if md5_text:
         if md5_text == hashes["md5"]:
             md5_status_lbl.config(text="Good!", foreground=SUCCESS_COLOR)
-            status_bar_lbl.config(text="Match Found!", foreground=SUCCESS_COLOR)
+            matches.append("MD5")
         else:
             md5_status_lbl.config(text="Bad!", foreground=ERROR_COLOR)
-            status_bar_lbl.config(text="No Matches Found :(", foreground=ERROR_COLOR)
 
     sha1_text = sha1_entry.get().lower()
     print(sha1_text)
     if sha1_text:
         if sha1_text == hashes["sha1"]:
             sha1_status_lbl.config(text="Good!", foreground=SUCCESS_COLOR)
-            status_bar_lbl.config(text="Match Found!", foreground=SUCCESS_COLOR)
+            matches.append("SHA1")
         else:
             sha1_status_lbl.config(text="Bad!", foreground=ERROR_COLOR)
-            status_bar_lbl.config(text="No Matches Found :(", foreground=ERROR_COLOR)
+
+    if len(matches) > 0:
+        status_bar_lbl.config(text=f"Match found for: {", ".join(matches)}", foreground=SUCCESS_COLOR)
+    else:
+        status_bar_lbl.config(text="No Matches Found :(", foreground=ERROR_COLOR)
 
 
 # File Select Frame ============================================================
