@@ -130,7 +130,7 @@ file_open_btn.grid(row=0, column=2, pady=(0, 5))
 
 
 # Hash Frame ===================================================================
-hash_frame = ttk.LabelFrame(root, text="Hashes")
+hash_frame = ttk.LabelFrame(root, text="Known Hashes")
 hash_frame.grid(row=1, column=0, sticky="NESW", padx=10, pady=0)
 
 hash_frame.columnconfigure(1, weight=1)
@@ -142,6 +142,8 @@ md5_lbl.grid(row=0, column=0, sticky="E")
 
 md5_entry = ttk.Entry(hash_frame)
 md5_entry.grid(row=0, column=1, sticky="EW", padx=(5, 0), pady=5)
+
+md5_entry.bind("<Return>", lambda event: compare_hashes())
 
 md5_status_lbl = ttk.Label(
     hash_frame,
@@ -157,6 +159,8 @@ sha1_lbl.grid(row=1, column=0, sticky="E")
 
 sha1_entry = ttk.Entry(hash_frame)
 sha1_entry.grid(row=1, column=1, sticky="EW", padx=(5, 0), pady=(0, 10))
+
+sha1_entry.bind("<Return>", lambda event: compare_hashes())
 
 sha1_status_lbl = ttk.Label(
     hash_frame,
