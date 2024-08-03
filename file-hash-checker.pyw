@@ -4,16 +4,6 @@ from tkinter import ttk
 import hashlib
 import os.path
 
-# Tkinter Root =================================================================
-root = tk.Tk()
-root.title("File Hash Checker")
-root.iconbitmap("app-icon.ico")
-root.resizable(width=False, height=False)
-
-root.columnconfigure(0, weight=1)
-root.columnconfigure(0, weight=1)
-
-
 # Constants ====================================================================
 DEFAULT_BUFFER_SIZE = 65536 # 65536 = 64kb
 
@@ -127,7 +117,6 @@ def compare_hashes():
             )
 
     sha1_text = sha1_entry.get().lower()
-    print(sha1_text)
     if sha1_text:
         if sha1_text == hashes["sha1"]:
             sha1_status_lbl.config(
@@ -150,6 +139,16 @@ def compare_hashes():
         )
     else:
         status_bar_lbl.config(text="No Matches Found :(", foreground=ERROR_COLOR)
+
+
+# Tkinter Root =================================================================
+root = tk.Tk()
+root.title("File Hash Checker")
+root.iconbitmap("app-icon.ico")
+root.resizable(width=False, height=False)
+
+root.columnconfigure(0, weight=1)
+root.columnconfigure(0, weight=1)
 
 
 # File Select Frame ============================================================
