@@ -6,7 +6,7 @@ import os.path
 
 # Tkinter Root =================================================================
 root = tk.Tk()
-root.title("File Hash")
+root.title("File Hash Checker")
 root.resizable(width=False, height=False)
 
 root.columnconfigure(0, weight=1)
@@ -40,9 +40,20 @@ def reset_ui(status_only=False):
         sha1_entry.delete(0, tk.END)
         md5_entry.delete(0, tk.END)
 
-    sha1_status_lbl.config(text=DEFAULT_STATUS_TEXT, foreground=NEUTRAL_COLOR)
-    md5_status_lbl.config(text=DEFAULT_STATUS_TEXT, foreground=NEUTRAL_COLOR)
-    status_bar_lbl.config(text=DEFAULT_STATUS_BAR_MESSAGE, foreground=NEUTRAL_COLOR)
+    sha1_status_lbl.config(
+        text=DEFAULT_STATUS_TEXT,
+        foreground=NEUTRAL_COLOR,
+        background=""
+    )
+    md5_status_lbl.config(
+        text=DEFAULT_STATUS_TEXT,
+        foreground=NEUTRAL_COLOR,
+        background=""
+    )
+    status_bar_lbl.config(
+        text=DEFAULT_STATUS_BAR_MESSAGE,
+        foreground=NEUTRAL_COLOR,
+    )
 
 
 def is_valid_input():
@@ -51,13 +62,22 @@ def is_valid_input():
     sha1_text = sha1_entry.get()
 
     if not file_path:
-        status_bar_lbl.config(text="File path is not present", foreground=ERROR_COLOR)
+        status_bar_lbl.config(
+            text="File path is not present",
+            foreground=ERROR_COLOR
+        )
         return False
     elif not os.path.isfile(file_path):
-        status_bar_lbl.config(text="File does not exist", foreground=ERROR_COLOR)
+        status_bar_lbl.config(
+            text="File does not exist",
+            foreground=ERROR_COLOR
+        )
         return False
     elif not (md5_text or sha1_text):
-        status_bar_lbl.config(text="No hashes to compare against file", foreground=ERROR_COLOR)
+        status_bar_lbl.config(
+            text="No hashes to compare against file",
+            foreground=ERROR_COLOR
+        )
         return False
     
     return True
@@ -92,22 +112,41 @@ def compare_hashes():
     md5_text = md5_entry.get().lower()
     if md5_text:
         if md5_text == hashes["md5"]:
-            md5_status_lbl.config(text="Good!", foreground=SUCCESS_COLOR)
+            md5_status_lbl.config(
+                text="Good!",
+                foreground="#FFF",
+                background=SUCCESS_COLOR
+            )
             matches.append("MD5")
         else:
-            md5_status_lbl.config(text="Bad!", foreground=ERROR_COLOR)
+            md5_status_lbl.config(
+                text="Bad!",
+                foreground="#FFF",
+                background=ERROR_COLOR
+            )
 
     sha1_text = sha1_entry.get().lower()
     print(sha1_text)
     if sha1_text:
         if sha1_text == hashes["sha1"]:
-            sha1_status_lbl.config(text="Good!", foreground=SUCCESS_COLOR)
+            sha1_status_lbl.config(
+                text="Good!",
+                foreground="white",
+                background=SUCCESS_COLOR
+            )
             matches.append("SHA1")
         else:
-            sha1_status_lbl.config(text="Bad!", foreground=ERROR_COLOR)
+            sha1_status_lbl.config(
+                text="Bad!",
+                foreground="white",
+                background=ERROR_COLOR
+            )
 
     if len(matches) > 0:
-        status_bar_lbl.config(text=f"Match found for: {", ".join(matches)}", foreground=SUCCESS_COLOR)
+        status_bar_lbl.config(
+            text=f"Match found for: {", ".join(matches)}",
+            foreground=SUCCESS_COLOR
+        )
     else:
         status_bar_lbl.config(text="No Matches Found :(", foreground=ERROR_COLOR)
 
@@ -141,33 +180,34 @@ md5_lbl = ttk.Label(hash_frame, text="MD5:")
 md5_lbl.grid(row=0, column=0, sticky="E")
 
 md5_entry = ttk.Entry(hash_frame)
-md5_entry.grid(row=0, column=1, sticky="EW", padx=(5, 0), pady=5)
+md5_entry.grid(row=0, column=1, sticky="EW", padx=5, pady=5)
 
 md5_entry.bind("<Return>", lambda event: compare_hashes())
 
 md5_status_lbl = ttk.Label(
     hash_frame,
     text=DEFAULT_STATUS_TEXT,
-    foreground=NEUTRAL_COLOR
+    foreground=NEUTRAL_COLOR,
+    anchor="center"
 )
-md5_status_lbl.config()
-md5_status_lbl.grid(row=0, column=2)
+md5_status_lbl.grid(row=0, column=2, sticky="EW", padx=(0, 5))
 
 # SHA1 Widgets
 sha1_lbl = ttk.Label(hash_frame, text="SHA1:")
 sha1_lbl.grid(row=1, column=0, sticky="E")
 
 sha1_entry = ttk.Entry(hash_frame)
-sha1_entry.grid(row=1, column=1, sticky="EW", padx=(5, 0), pady=(0, 10))
+sha1_entry.grid(row=1, column=1, sticky="EW", padx=5, pady=5)
 
 sha1_entry.bind("<Return>", lambda event: compare_hashes())
 
 sha1_status_lbl = ttk.Label(
     hash_frame,
     text=DEFAULT_STATUS_TEXT,
-    foreground=NEUTRAL_COLOR
+    foreground=NEUTRAL_COLOR,
+    anchor="center"
 )
-sha1_status_lbl.grid(row=1, column=2)
+sha1_status_lbl.grid(row=1, column=2, sticky="EW", padx=(0, 5))
 
 
 # Compare Frame ================================================================
