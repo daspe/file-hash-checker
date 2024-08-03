@@ -1,13 +1,14 @@
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
-import hashlib
+import hashlib, time
 import os.path
 
 # Constants ====================================================================
 # Text
 DEFAULT_STATUS_TEXT = "---"
-DEFAULT_STATUS_BAR_MESSAGE = "Dan Spencer (2024)"
+DEFAULT_STATUS_BAR_TEXT = "Dan Spencer (2024)"
+DEFAULT_STATUS_BAR_TIMER_TEXT = "0.000s"
 
 # Colors
 STATUS_BAR_BG_COLOR = "#DDD"
@@ -36,9 +37,10 @@ def reset_ui(delete_entries=True):
         )
 
     status_bar_lbl.config(
-        text=DEFAULT_STATUS_BAR_MESSAGE,
+        text=DEFAULT_STATUS_BAR_TEXT,
         foreground=NEUTRAL_COLOR,
     )
+    status_bar_timer_lbl.config(text=DEFAULT_STATUS_BAR_TIMER_TEXT)
 
 
 def update_status_label(status_lbl, success=True):
@@ -113,6 +115,7 @@ def compare_hashes():
         return
     
     reset_ui(delete_entries=False)
+    start_time = time.time()
 
     matches = []
 
@@ -143,13 +146,18 @@ def compare_hashes():
         else:
             update_status_label(sha256_status_lbl, False)
 
+    end_time = time.time()
+    run_time = float(end_time - start_time)
+
     if len(matches) > 0:
         status_bar_lbl.config(
             text=f"Match found for: {", ".join(i.upper() for i in matches)}",
             foreground=SUCCESS_COLOR
         )
     else:
-        status_bar_lbl.config(text="No Matches Found :(", foreground=ERROR_COLOR)
+        status_bar_lbl.config(text="No matches found :(", foreground=ERROR_COLOR)
+
+    status_bar_timer_lbl.config(text=f"{run_time:.3f}s")
 
 
 # Tkinter Root =================================================================
@@ -257,16 +265,25 @@ ttk.Style().configure("Statusbar.TFrame", background=STATUS_BAR_BG_COLOR)
 status_bar = ttk.Frame(root, style="Statusbar.TFrame")
 status_bar.grid(row=3, column=0, sticky="NESW")
 
+status_bar.columnconfigure(0, weight=3)
 status_bar.columnconfigure(1, weight=1)
 status_bar.rowconfigure(1, weight=1, minsize=20)
 
 ttk.Separator(status_bar).grid(row=0, column=0, columnspan=10, sticky="EW")
 status_bar_lbl = ttk.Label(
     status_bar,
-    text=DEFAULT_STATUS_BAR_MESSAGE,
+    text=DEFAULT_STATUS_BAR_TEXT,
     foreground=NEUTRAL_COLOR,
     background=STATUS_BAR_BG_COLOR
 )
 status_bar_lbl.grid(column=0, row=1, sticky="W", padx=(5, 0))
+
+status_bar_timer_lbl = ttk.Label(
+    status_bar,
+    text=DEFAULT_STATUS_BAR_TIMER_TEXT,
+    foreground=NEUTRAL_COLOR,
+    background=STATUS_BAR_BG_COLOR
+)
+status_bar_timer_lbl.grid(column=1, row=1, sticky="E", padx=5)
 
 root.mainloop()
