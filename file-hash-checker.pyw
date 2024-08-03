@@ -5,8 +5,6 @@ import hashlib
 import os.path
 
 # Constants ====================================================================
-DEFAULT_BUFFER_SIZE = 65536 # 65536 = 64kb
-
 # Text
 DEFAULT_STATUS_TEXT = "---"
 DEFAULT_STATUS_BAR_MESSAGE = "Dan Spencer (2024)"
@@ -86,29 +84,28 @@ def is_valid_input():
     return True
 
 
-def compute_hashes():
+def compute_hash(type: str):
     file_path = file_path_entry.get()
 
-    md5 = hashlib.md5()
-    sha1 = hashlib.sha1()
-    sha256 = hashlib.sha256()
+    match type:
+        case "md5":
+            hash = hashlib.md5()
+        case "sha1":
+            hash = hashlib.sha1()
+        case "sha256":
+            hash = hashlib.sha256()
+        case _:
+            print("Internal Error: unknown hash type")
+            return
 
     with open(file_path, 'rb') as f:
         while True:
-            data = f.read(DEFAULT_BUFFER_SIZE)
+            data = f.read()
             if not data:
                 break
-            md5.update(data)
-            sha1.update(data)
-            sha256.update(data)
+            hash.update(data)
 
-    hash_dict = {
-        "md5": str(md5.hexdigest()),
-        "sha1": str(sha1.hexdigest()),
-        "sha256": str(sha256.hexdigest())
-    }
-
-    return hash_dict
+    return str(hash.hexdigest())
 
 
 def compare_hashes():
@@ -117,12 +114,12 @@ def compare_hashes():
     
     reset_ui(delete_entries=False)
 
-    hashes = compute_hashes()
     matches = []
 
     md5_text = md5_entry.get().lower()
     if md5_text:
-        if md5_text == hashes["md5"]:
+        md5_hash = compute_hash("md5")
+        if md5_text == md5_hash:
             update_status_label(md5_status_lbl, True)
             matches.append("md5")
         else:
@@ -130,7 +127,8 @@ def compare_hashes():
 
     sha1_text = sha1_entry.get().lower()
     if sha1_text:
-        if sha1_text == hashes["sha1"]:
+        sha1_hash = compute_hash("sha1")
+        if sha1_text == sha1_hash:
             update_status_label(sha1_status_lbl, True)
             matches.append("sha1")
         else:
@@ -138,7 +136,8 @@ def compare_hashes():
 
     sha256_text = sha256_entry.get().lower()
     if sha256_text:
-        if sha256_text == hashes["sha256"]:
+        sha256_hash = compute_hash("sha256")
+        if sha256_text == sha256_hash:
             update_status_label(sha256_status_lbl, True)
             matches.append("sha256")
         else:
