@@ -25,22 +25,18 @@ def open_file():
     file_path_entry.insert(0, file)
 
 
-def reset_ui(status_only=False):
-    if not status_only:
-        file_path_entry.delete(0, tk.END)
-        sha1_entry.delete(0, tk.END)
-        md5_entry.delete(0, tk.END)
+def reset_ui(delete_entries=True):
+    if delete_entries:
+        for entry in [file_path_entry, md5_entry, sha1_entry, sha256_entry]:
+            entry.delete(0, tk.END)
 
-    sha1_status_lbl.config(
-        text=DEFAULT_STATUS_TEXT,
-        foreground=NEUTRAL_COLOR,
-        background=""
-    )
-    md5_status_lbl.config(
-        text=DEFAULT_STATUS_TEXT,
-        foreground=NEUTRAL_COLOR,
-        background=""
-    )
+    for status_lbl in [md5_status_lbl, sha1_status_lbl, sha256_status_lbl]:
+        status_lbl.config(
+            text=DEFAULT_STATUS_TEXT,
+            foreground=NEUTRAL_COLOR,
+            background=""
+        )
+
     status_bar_lbl.config(
         text=DEFAULT_STATUS_BAR_MESSAGE,
         foreground=NEUTRAL_COLOR,
@@ -95,7 +91,7 @@ def compare_hashes():
     if not is_valid_input():
         return
     
-    reset_ui(status_only=True)
+    reset_ui(delete_entries=False)
 
     hashes = compute_hashes()
     matches = []
