@@ -43,6 +43,21 @@ def reset_ui(delete_entries=True):
     )
 
 
+def update_status_label(status_lbl, success=True):
+    if success:
+        status_lbl.config(
+            text="Good!",
+            foreground="#FFF",
+            background=SUCCESS_COLOR
+        )
+    else:
+        status_lbl.config(
+            text="Bad!",
+            foreground="#FFF",
+            background=ERROR_COLOR
+        )
+
+
 def is_valid_input():
     file_path = file_path_entry.get()
     md5_text = md5_entry.get()
@@ -108,50 +123,26 @@ def compare_hashes():
     md5_text = md5_entry.get().lower()
     if md5_text:
         if md5_text == hashes["md5"]:
-            md5_status_lbl.config(
-                text="Good!",
-                foreground="#FFF",
-                background=SUCCESS_COLOR
-            )
+            update_status_label(md5_status_lbl, True)
             matches.append("md5")
         else:
-            md5_status_lbl.config(
-                text="Bad!",
-                foreground="#FFF",
-                background=ERROR_COLOR
-            )
+            update_status_label(md5_status_lbl, False)
 
     sha1_text = sha1_entry.get().lower()
     if sha1_text:
         if sha1_text == hashes["sha1"]:
-            sha1_status_lbl.config(
-                text="Good!",
-                foreground="white",
-                background=SUCCESS_COLOR
-            )
+            update_status_label(sha1_status_lbl, True)
             matches.append("sha1")
         else:
-            sha1_status_lbl.config(
-                text="Bad!",
-                foreground="white",
-                background=ERROR_COLOR
-            )
+            update_status_label(sha1_status_lbl, False)
 
     sha256_text = sha256_entry.get().lower()
     if sha256_text:
         if sha256_text == hashes["sha256"]:
-            sha256_status_lbl.config(
-                text="Good!",
-                foreground="white",
-                background=SUCCESS_COLOR
-            )
+            update_status_label(sha256_status_lbl, True)
             matches.append("sha256")
         else:
-            sha256_status_lbl.config(
-                text="Bad!",
-                foreground="white",
-                background=ERROR_COLOR
-            )
+            update_status_label(sha256_status_lbl, False)
 
     if len(matches) > 0:
         status_bar_lbl.config(
