@@ -209,6 +209,23 @@ sha1_status_lbl = ttk.Label(
 )
 sha1_status_lbl.grid(row=1, column=2, sticky="EW", padx=(0, 5))
 
+# SHA256 Widgets
+sha256_lbl = ttk.Label(hash_frame, text="SHA256:")
+sha256_lbl.grid(row=2, column=0, sticky="E")
+
+sha256_entry = ttk.Entry(hash_frame)
+sha256_entry.grid(row=2, column=1, sticky="EW", padx=5, pady=5)
+
+sha256_entry.bind("<Return>", lambda event: compare_hashes())
+
+sha256_status_lbl = ttk.Label(
+    hash_frame,
+    text=DEFAULT_STATUS_TEXT,
+    foreground=NEUTRAL_COLOR,
+    anchor="center"
+)
+sha256_status_lbl.grid(row=2, column=2, sticky="EW", padx=(0, 5))
+
 
 # Compare Frame ================================================================
 compare_frame = ttk.Frame(root)
