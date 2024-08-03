@@ -47,6 +47,7 @@ def is_valid_input():
     file_path = file_path_entry.get()
     md5_text = md5_entry.get()
     sha1_text = sha1_entry.get()
+    sha256_text = sha256_entry.get()
 
     if not file_path:
         status_bar_lbl.config(
@@ -60,7 +61,7 @@ def is_valid_input():
             foreground=ERROR_COLOR
         )
         return False
-    elif not (md5_text or sha1_text):
+    elif not (md5_text or sha1_text or sha256_text):
         status_bar_lbl.config(
             text="No hashes to compare against file",
             foreground=ERROR_COLOR
@@ -75,6 +76,7 @@ def compute_hashes():
 
     md5 = hashlib.md5()
     sha1 = hashlib.sha1()
+    sha256 = hashlib.sha256()
 
     with open(file_path, 'rb') as f:
         while True:
@@ -83,8 +85,15 @@ def compute_hashes():
                 break
             md5.update(data)
             sha1.update(data)
+            sha256.update(data)
 
-    return {"md5": str(md5.hexdigest()), "sha1": str(sha1.hexdigest())}
+    hash_dict = {
+        "md5": str(md5.hexdigest()),
+        "sha1": str(sha1.hexdigest()),
+        "sha256": str(sha256.hexdigest())
+    }
+
+    return hash_dict
 
 
 def compare_hashes():
@@ -104,7 +113,7 @@ def compare_hashes():
                 foreground="#FFF",
                 background=SUCCESS_COLOR
             )
-            matches.append("MD5")
+            matches.append("md5")
         else:
             md5_status_lbl.config(
                 text="Bad!",
@@ -120,7 +129,7 @@ def compare_hashes():
                 foreground="white",
                 background=SUCCESS_COLOR
             )
-            matches.append("SHA1")
+            matches.append("sha1")
         else:
             sha1_status_lbl.config(
                 text="Bad!",
@@ -128,9 +137,25 @@ def compare_hashes():
                 background=ERROR_COLOR
             )
 
+    sha256_text = sha256_entry.get().lower()
+    if sha256_text:
+        if sha256_text == hashes["sha256"]:
+            sha256_status_lbl.config(
+                text="Good!",
+                foreground="white",
+                background=SUCCESS_COLOR
+            )
+            matches.append("sha256")
+        else:
+            sha256_status_lbl.config(
+                text="Bad!",
+                foreground="white",
+                background=ERROR_COLOR
+            )
+
     if len(matches) > 0:
         status_bar_lbl.config(
-            text=f"Match found for: {", ".join(matches)}",
+            text=f"Match found for: {", ".join(i.upper() for i in matches)}",
             foreground=SUCCESS_COLOR
         )
     else:
