@@ -7,6 +7,7 @@ import os.path
 # Tkinter Root =================================================================
 root = tk.Tk()
 root.title("File Hash Checker")
+root.iconbitmap("app-icon.ico")
 root.resizable(width=False, height=False)
 
 root.columnconfigure(0, weight=1)
