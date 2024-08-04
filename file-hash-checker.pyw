@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog
-from tkinter import ttk
+from tkinter import ttk, filedialog
 import hashlib, time
 import os.path
 
@@ -162,7 +161,6 @@ def compare_hashes():
 
 # Context Menu Functions
 def create_context_menu(event):
-    # print(vars(event))
     context_menu = tk.Menu(root, tearoff=0)
 
     context_menu.add_command(label="Cut", command=lambda: on_context_menu_cut_clicked(event.widget))
@@ -173,17 +171,34 @@ def create_context_menu(event):
 
 
 def on_context_menu_cut_clicked(widget):
-    print("Cut clicked")
+    try:
+        selection = widget.selection_get()
+        if selection:
+            root.clipboard_clear()
+            root.clipboard_append(selection)
+            widget.delete("sel.first", "sel.last")
+    except Exception as e:
+        print(repr(e))
 
 
 def on_context_menu_copy_clicked(widget):
-    print("Copy clicked")
+    try:
+        selection = widget.selection_get()
+        if selection:
+            root.clipboard_clear()
+            root.clipboard_append(selection)
+    except Exception as e:
+        print(repr(e))
 
 
 def on_context_menu_paste_clicked(widget):
-    print("Paste clicked")
-    clipboard = root.clipboard_get()
-    widget.insert(0, clipboard)
+    try:
+        clipboard = root.clipboard_get()
+        if clipboard:
+            widget.delete(0, tk.END)
+            widget.insert(0, clipboard)
+    except Exception as e:
+        print(repr(e))
 
 
 # Tkinter Root =================================================================
