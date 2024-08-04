@@ -160,6 +160,32 @@ def compare_hashes():
     status_bar_timer_lbl.config(text=f"{run_time:.3f}s")
 
 
+# Context Menu Functions
+def create_context_menu(event):
+    # print(vars(event))
+    context_menu = tk.Menu(root, tearoff=0)
+
+    context_menu.add_command(label="Cut", command=lambda: on_context_menu_cut_clicked(event.widget))
+    context_menu.add_command(label="Copy", command=lambda: on_context_menu_copy_clicked(event.widget))
+    context_menu.add_command(label="Paste", command=lambda: on_context_menu_paste_clicked(event.widget))
+
+    context_menu.tk_popup(event.x_root, event.y_root)
+
+
+def on_context_menu_cut_clicked(widget):
+    print("Cut clicked")
+
+
+def on_context_menu_copy_clicked(widget):
+    print("Copy clicked")
+
+
+def on_context_menu_paste_clicked(widget):
+    print("Paste clicked")
+    clipboard = root.clipboard_get()
+    widget.insert(0, clipboard)
+
+
 # Tkinter Root =================================================================
 root = tk.Tk()
 root.title("File Hash Checker")
@@ -183,6 +209,8 @@ file_path_lbl.grid(row=0, column=0, sticky="E")
 file_path_entry = ttk.Entry(file_frame)
 file_path_entry.grid(row=0, column=1, sticky="EW", padx=5, pady=(0, 5))
 
+file_path_entry.bind("<Button-3>", create_context_menu)
+
 file_open_btn = ttk.Button(file_frame, text="Select File", command=open_file)
 file_open_btn.grid(row=0, column=2, pady=(0, 5))
 
@@ -202,6 +230,7 @@ md5_entry = ttk.Entry(hash_frame)
 md5_entry.grid(row=0, column=1, sticky="EW", padx=5, pady=5)
 
 md5_entry.bind("<Return>", lambda event: compare_hashes())
+md5_entry.bind("<Button-3>", create_context_menu)
 
 md5_status_lbl = ttk.Label(
     hash_frame,
@@ -219,6 +248,7 @@ sha1_entry = ttk.Entry(hash_frame)
 sha1_entry.grid(row=1, column=1, sticky="EW", padx=5, pady=5)
 
 sha1_entry.bind("<Return>", lambda event: compare_hashes())
+sha1_entry.bind("<Button-3>", create_context_menu)
 
 sha1_status_lbl = ttk.Label(
     hash_frame,
@@ -236,6 +266,7 @@ sha256_entry = ttk.Entry(hash_frame)
 sha256_entry.grid(row=2, column=1, sticky="EW", padx=5, pady=5)
 
 sha256_entry.bind("<Return>", lambda event: compare_hashes())
+sha256_entry.bind("<Button-3>", create_context_menu)
 
 sha256_status_lbl = ttk.Label(
     hash_frame,
@@ -286,4 +317,5 @@ status_bar_timer_lbl = ttk.Label(
 )
 status_bar_timer_lbl.grid(column=1, row=1, sticky="E", padx=5)
 
+# Call the mainloop of Tk
 root.mainloop()
