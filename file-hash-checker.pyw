@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, StringVar
 import hashlib, time
 import os.path
 
@@ -14,6 +14,10 @@ STATUS_BAR_BG_COLOR = "#DDD"
 NEUTRAL_COLOR = "#777" # Gray
 SUCCESS_COLOR = "#43A047" # Green
 ERROR_COLOR = "#E53935" # Red
+
+# Other
+DEFAULT_FILE_HASH_TYPE = "md5" # "md5", "sha1", or "sha256"
+HASH_TYPES = ["md5", "sha1", "sha256"]
 
 
 # Functionality ================================================================
@@ -210,6 +214,9 @@ root.resizable(width=False, height=False)
 root.columnconfigure(0, weight=1)
 root.columnconfigure(0, weight=1)
 
+file_hash_type = StringVar(root)
+file_hash_type.set(HASH_TYPES[0])
+
 
 # File Select Frame ============================================================
 file_frame = ttk.Frame(root)
@@ -228,6 +235,15 @@ file_path_entry.bind("<Button-3>", create_context_menu)
 
 file_open_btn = ttk.Button(file_frame, text="Select File", command=open_file)
 file_open_btn.grid(row=0, column=2, pady=(0, 5))
+
+file_hash_lbl = ttk.Label(file_frame, text=DEFAULT_STATUS_TEXT, foreground=NEUTRAL_COLOR, anchor="center")
+file_hash_lbl.grid(row=1, column=0, columnspan=3, sticky="EW")
+
+file_hash_btn = ttk.Button(file_frame, text="Compute File Hash")
+file_hash_btn.grid(row=2, column=0, columnspan=2, sticky="EW")
+
+file_hash_type_list = tk.OptionMenu(file_frame, file_hash_type, *HASH_TYPES)
+file_hash_type_list.grid(row=2, column=2, sticky="EW")
 
 
 # Hash Frame ===================================================================
