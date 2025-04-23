@@ -16,7 +16,7 @@ SUCCESS_COLOR = "#43A047" # Green
 ERROR_COLOR = "#E53935" # Red
 
 # Other
-DEFAULT_FILE_HASH_TYPE = "md5" # "md5", "sha1", or "sha256"
+DEFAULT_FILE_HASH_TYPE = "sha1" # "md5", "sha1", or "sha256"
 HASH_TYPES = ["md5", "sha1", "sha256"]
 
 
@@ -27,10 +27,16 @@ def open_file():
     file_path_entry.insert(0, file)
 
 
-def reset_ui(delete_entries=True):
+def reset_ui(delete_entries=True, reset_file_hash_lbl=True):
     if delete_entries:
         for entry in [file_path_entry, md5_entry, sha1_entry, sha256_entry]:
             entry.delete(0, tk.END)
+
+    if reset_file_hash_lbl:
+        file_hash_lbl.config(
+            text=DEFAULT_STATUS_TEXT,
+            foreground=NEUTRAL_COLOR,
+        )
 
     for status_lbl in [md5_status_lbl, sha1_status_lbl, sha256_status_lbl]:
         status_lbl.config(
@@ -61,11 +67,8 @@ def update_status_label(status_lbl, success=True):
         )
 
 
-def is_valid_input():
+def is_valid_file():
     file_path = file_path_entry.get()
-    md5_text = md5_entry.get()
-    sha1_text = sha1_entry.get()
-    sha256_text = sha256_entry.get()
 
     if not file_path:
         status_bar_lbl.config(
@@ -79,7 +82,16 @@ def is_valid_input():
             foreground=ERROR_COLOR
         )
         return False
-    elif not (md5_text or sha1_text or sha256_text):
+    
+    return True
+
+
+def is_valid_hash_input():
+    md5_text = md5_entry.get()
+    sha1_text = sha1_entry.get()
+    sha256_text = sha256_entry.get()
+
+    if not (md5_text or sha1_text or sha256_text):
         status_bar_lbl.config(
             text="No hashes to compare against file",
             foreground=ERROR_COLOR
@@ -114,10 +126,11 @@ def compute_hash(type: str):
 
 
 def compare_hashes():
-    if not is_valid_input():
+    reset_ui(delete_entries=False, reset_file_hash_lbl=False)
+
+    if not is_valid_file() or not is_valid_hash_input():
         return
     
-    reset_ui(delete_entries=False)
     start_time = time.time()
 
     matches = []
@@ -161,6 +174,18 @@ def compare_hashes():
         status_bar_lbl.config(text="No matches found :(", foreground=ERROR_COLOR)
 
     status_bar_timer_lbl.config(text=f"{run_time:.3f}s")
+
+
+def on_compute_file_hash_btn_clicked():
+    if not is_valid_file():
+        return
+    
+    hash_type = file_hash_type.get()
+    file_hash = compute_hash(hash_type)
+    file_hash_lbl.config(text=file_hash, foreground=NEUTRAL_COLOR)
+    status_bar_lbl.config(text=f"{hash_type.upper()} hash computed!", foreground=SUCCESS_COLOR)
+
+    update_status_label
 
 
 # Context Menu Functions
@@ -215,7 +240,7 @@ root.columnconfigure(0, weight=1)
 root.columnconfigure(0, weight=1)
 
 file_hash_type = StringVar(root)
-file_hash_type.set(HASH_TYPES[0])
+file_hash_type.set(HASH_TYPES[1])
 
 
 # File Select Frame ============================================================
@@ -239,7 +264,7 @@ file_open_btn.grid(row=0, column=2, pady=(0, 5))
 file_hash_lbl = ttk.Label(file_frame, text=DEFAULT_STATUS_TEXT, foreground=NEUTRAL_COLOR, anchor="center")
 file_hash_lbl.grid(row=1, column=0, columnspan=3, sticky="EW")
 
-file_hash_btn = ttk.Button(file_frame, text="Compute File Hash")
+file_hash_btn = ttk.Button(file_frame, text="Compute File Hash", command=on_compute_file_hash_btn_clicked)
 file_hash_btn.grid(row=2, column=0, columnspan=2, sticky="EW")
 
 file_hash_type_list = tk.OptionMenu(file_frame, file_hash_type, *HASH_TYPES)
