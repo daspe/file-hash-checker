@@ -37,6 +37,7 @@ def reset_ui(delete_entries=True, reset_file_hash_lbl=True):
             text=DEFAULT_STATUS_TEXT,
             foreground=NEUTRAL_COLOR,
         )
+        file_hash.set('')
 
     for status_lbl in [md5_status_lbl, sha1_status_lbl, sha256_status_lbl]:
         status_lbl.config(
@@ -180,12 +181,22 @@ def on_compute_file_hash_btn_clicked():
     if not is_valid_file():
         return
     
-    hash_type = file_hash_type.get()
-    file_hash = compute_hash(hash_type)
-    file_hash_lbl.config(text=file_hash, foreground=NEUTRAL_COLOR)
-    status_bar_lbl.config(text=f"{hash_type.upper()} hash computed!", foreground=SUCCESS_COLOR)
+    current_file_hash = compute_hash(file_hash_type.get())
+    file_hash.set(current_file_hash)
+    file_hash_lbl.config(text=file_hash.get(), foreground=NEUTRAL_COLOR)
+    status_bar_lbl.config(text=f"{file_hash_type.get().upper()} hash computed!", foreground=SUCCESS_COLOR)
 
-    update_status_label
+
+def on_file_hash_lbl_clicked():
+    try:
+        selection = file_hash.get()
+        if selection:
+            root.clipboard_clear()
+            root.clipboard_append(selection)
+            file_hash_lbl.config(foreground=SUCCESS_COLOR)
+            status_bar_lbl.config(text="Hash copied!", foreground=SUCCESS_COLOR)
+    except Exception as e:
+        print(repr(e))
 
 
 # Context Menu Functions
@@ -239,6 +250,7 @@ root.resizable(width=False, height=False)
 root.columnconfigure(0, weight=1)
 root.columnconfigure(0, weight=1)
 
+file_hash = StringVar(root)
 file_hash_type = StringVar(root)
 file_hash_type.set(HASH_TYPES[1])
 
@@ -263,6 +275,7 @@ file_open_btn.grid(row=0, column=2, pady=(0, 5))
 
 file_hash_lbl = ttk.Label(file_frame, text=DEFAULT_STATUS_TEXT, foreground=NEUTRAL_COLOR, anchor="center")
 file_hash_lbl.grid(row=1, column=0, columnspan=3, sticky="EW")
+file_hash_lbl.bind("<Button-1>", lambda event: on_file_hash_lbl_clicked())
 
 file_hash_btn = ttk.Button(file_frame, text="Compute File Hash", command=on_compute_file_hash_btn_clicked)
 file_hash_btn.grid(row=2, column=0, columnspan=2, sticky="EW")
